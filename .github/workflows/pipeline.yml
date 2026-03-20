@@ -1,6 +1,9 @@
 name: Audio Analysis Pipeline
 on: [push]
 
+permissions:
+  contents: write # This gives the 'worker' permission to push files
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +26,11 @@ jobs:
 
       - name: Run Analysis
         run: python analyzer.py  # This points to your actual Python file
+
+      - name: Commit and Push Results
+        run: |
+          git config --local user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "Update Forensic Maps [skip ci]"
+          git push
