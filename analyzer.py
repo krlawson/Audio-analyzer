@@ -36,13 +36,29 @@ def analyze_audio(file_path):
     
     print("Success: Physical results created in root directory.")
 
+import shutil # Add this at the very top of your file
+
 if __name__ == "__main__":
-    # Check for 'uploads' folder
-    target = None
-    if os.path.exists("uploads"):
-        files = [f for f in os.listdir("uploads") if f.endswith(".wav")]
-        if files:
-            target = os.path.join("uploads", files[0])
+    upload_folder = "uploads"
+    processed_folder = "processed"
     
-    analyze_audio(target)
+    # Create the 'archive' if it doesn't exist
+    if not os.path.exists(processed_folder):
+        os.makedirs(processed_folder)
+
+    if os.path.exists(upload_folder):
+        audio_files = [f for f in os.listdir(upload_folder) if f.endswith(('.wav', '.mp3'))]
+        
+        for filename in audio_files:
+            full_path = os.path.join(upload_folder, filename)
+            
+            # 1. RUN THE MATH
+            analyze_audio(full_path)
+            
+            # 2. MOVE THE EVIDENCE (The Janitor step)
+            # This prevents the script from re-running this file next time
+            shutil.move(full_path, os.path.join(processed_folder, filename))
+            print(f"Moved {filename} to processed folder.")
+    else:
+        print("No uploads found.")
 
