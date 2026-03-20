@@ -1,28 +1,26 @@
 name: Publish Studio Image
 on:
-  push:
-    paths:
-      - 'Dockerfile' # Only runs if you change the environment
-      - 'requirements.txt'
+  workflow_dispatch: # Allows you to click a 'Play' button to start the build
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  push_to_registry:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
+      - name: Build and Push
         uses: docker/build-push-action@v5
         with:
-          context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/audio-processor:latest
+          # This saves the image to your private 'Packages' shelf
+          tags: ghcr.io/${{ github.repository }}/forensic-studio:latest
+
