@@ -34,16 +34,16 @@ jobs:
           git config --local user.name "GitHub Action"
           git config --local user.email "action@github.com"
           
-          # Check if ANY maps were actually created
-          if ls map_*.png 1> /dev/null 2>&1; then
-            git add map_*.png data_*.json
-            git commit -m "Forensic Batch Update [skip ci]"
+          # Change this to match the actual files we see in your debug log
+          if [ -f "analysis_map.png" ]; then
+            git add analysis_map.png analysis_data.json
+            git commit -m "Forensic Audit Complete [skip ci]"
             git push
           else
-            echo "Physical results (map_*.png) are missing. Printing directory for debug:"
-            ls -R
+            echo "Physical results still missing."
             exit 1
           fi
+
 
 
 
