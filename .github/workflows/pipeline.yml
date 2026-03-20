@@ -25,19 +25,21 @@ jobs:
 
       - name: Save Results to Repo
         run: |
+          # 1. THE GEOGRAPHY FIX: Tell Git this directory is safe
+          git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
+          
+          # 2. Setup Identity
           git config --local user.name "GitHub Action"
           git config --local user.email "action@github.com"
           
-          # 1. Pull the latest changes to synchronize the 'gate'
-          # This prevents the 'rejected' error
+          # 3. Synchronize with the cloud
           git pull origin main --rebase
 
-          # 2. Add your forensic maps
+          # 4. Add and Push
           git add "map_*.png" "data_*.json"
-          
-          # 3. Commit and Push
           git diff --staged --quiet || git commit -m "Forensic Batch Update [skip ci]"
           git push
+
 
 
 
