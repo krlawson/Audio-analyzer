@@ -1,26 +1,27 @@
-# Use a slim version of Python to keep it fast
+# 1. Start with a stable Python base
 FROM python:3.11-slim
 
-# 1. Install the "Hidden" dependencies that cause the headaches
+# 2. Install the system-level 'Headache' dependencies
+# These are the C-libraries that Python usually can't find on its own
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     libsndfile1 \
-    cmake \
     && rm -rf /var/lib/apt/lists/*
 
-# 2. Set the working directory
+# 3. Create a workspace
 WORKDIR /app
 
-# 3. Install the Python science stack
+# 4. Install the Python science stack
+# We do this before copying code to speed up future builds (caching)
 RUN pip install --no-cache-dir \
     librosa \
     numpy \
-    scipy \
-    soundfile \
-    matplotlib
+    matplotlib \
+    soundfile
 
-# 4. Copy your forensic script into the box
-COPY analyze.py .
+# 5. Copy your Python script into the container
+COPY analyzer.py .
 
-# 5. Run it
-ENTRYPOINT ["python", "/app/analyze.py"]
+# 6. Set the script to run by default
+# It expects a file path as an argument
+ENTRYPOINT ["python", "analyzer.py"]
