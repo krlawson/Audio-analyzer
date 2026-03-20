@@ -28,12 +28,17 @@ jobs:
           git config --local user.name "GitHub Action"
           git config --local user.email "action@github.com"
           
-          # Quotes handle the spaces in your filenames
+          # 1. Pull the latest changes to synchronize the 'gate'
+          # This prevents the 'rejected' error
+          git pull origin main --rebase
+
+          # 2. Add your forensic maps
           git add "map_*.png" "data_*.json"
           
-          # Only push if there's actually new data
+          # 3. Commit and Push
           git diff --staged --quiet || git commit -m "Forensic Batch Update [skip ci]"
           git push
+
 
 
 
